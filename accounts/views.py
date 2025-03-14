@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404
 
 def index(request):
     return HttpResponse("You're at the index page.")
+"""
 def signup(request):
     if request.method == "POST":
         first_name = request.POST.get("first_name")
@@ -40,6 +41,7 @@ def signup(request):
         return redirect("login")
     else:
         return render(request, "register/signup.html")
+"""
 
 def login(request):
     if request.method == "POST":
