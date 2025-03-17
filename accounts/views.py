@@ -1,12 +1,9 @@
-from gc import get_objects
-
 from django.contrib import messages, auth
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from unicodedata import category
-
-from .models import User, Project, Advisor
-# from .forms import ProjectForm
+from .models import User, Project, Advisor, Student
 from django.shortcuts import get_object_or_404
 
 
@@ -14,6 +11,8 @@ from django.shortcuts import get_object_or_404
 
 def index(request):
     return HttpResponse("You're at the index page.")
+
+
 """
 def signup(request):
     if request.method == "POST":
@@ -43,6 +42,7 @@ def signup(request):
         return render(request, "register/signup.html")
 """
 
+
 def login(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -59,16 +59,21 @@ def login(request):
     return render(request, "register/login.html")
 
 
+@login_required
 def logout(request):
     auth.logout(request)
     return redirect("login")
 
-#CRUD for Project
-def project_list(request): #Display all project
+
+# -----------------------------------------------------------------------------------------------------
+# CRUD for Project
+def project_list(request):  # Display all project
     projects = Project.objects.all()
     return render(request, 'something.html', {'projects': projects})
 
-def add_project(request): #Create some project
+
+@login_required
+def add_project(request):  # Create some project
     if request.method == 'POST':
         title = request.POST['title']
         description = request.POST['description']
@@ -93,11 +98,20 @@ def add_project(request): #Create some project
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    return render(request, 'projects/project_detail.html', {'project': project})
+    students = project.students.all()
 
+    context = {
+        'project': project,
+        'students': students,
+    }
+
+    return render(request, 'projects/project_detail.html', context)
+
+
+@login_required
 def update_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    if request.method =="POST":
+    if request.method == "POST":
         title = request.POST["title"]
         description = request.POST["description"]
         status = request.POST["status"]
@@ -113,13 +127,51 @@ def update_project(request, project_id):
         project.save()
         return redirect('something.html')
 
+
+@login_required
 def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     if request.method == "POST":
         project.delete()
-        return redirect('something.html')
+        messages.success(request, "Project deleted successfully.")
+        return redirect('project_list')
 
-    return render(request, 'something.html')
+    return render(request, 'projects/confirm_delete.html', {'project': project})
 
-#Views for user
+
+def search_project(request):
+    query = request.GET.get('q')
+    projects = Project.objects.all()
+
+    if query:
+        projects = projects.filter(
+            Q(title__icontains=query) |
+            Q(category__icontains=query) |
+            Q(status__icontains=query)
+        )
+
+    return render(request, 'project_list.html', {'projects': projects})
+
+
+@login_required
+def add_students_to_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)  # Get a project
+
+    if request.method == "POST":
+        student_ids = request.POST.getlist("students")
+        for student_id in student_ids:
+            try:
+                student = User.objects.get(id=student_ids)
+                project.students.add(student)
+            except Student.DoesNotExist:
+                messages.warning(request, f"Student with ID {student_id} does not exist.")
+
+        messages.success(request, "Students added successfully.")
+        return redirect("project_detail", project_id=project.id)
+
+    students = Student.objects.exclude(project=project)
+
+    return render(request, 'add_students.html', {'project': project, 'students': students})
+
+# -----------------------------------------------------------------------------------------------------
