@@ -1,10 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
 
 # Create your models here.
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, role, password=None):
+        if role not in dict(User.ROLE_CHOICES).keys():
+            raise ValueError(f"Invalid role. Must be one of: {User.ROLE_CHOICES}")
+
         if not email:
             raise ValueError("The email address is required")
 
@@ -84,8 +88,15 @@ class Student(models.Model):
 
 # ------------------- Advisor -------------------
 class Advisor(models.Model):
+    TITLE_CHOICES = [
+        ('ดร.', 'ดร.'),
+        ('ผศ.', 'ผู้ช่วยศาสตราจารย์'),
+        ('รศ.', 'รองศาสตราจารย์'),
+        ('ศ.', 'ศาสตราจารย์'),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="advisor_profile")
-    title = models.CharField(max_length=50)  # เช่น รองศาสตราจารย์ ดร.
+    title = models.CharField(max_length=50, choices=TITLE_CHOICES)
     expertise = models.CharField(max_length=200)
 
     def __str__(self):
@@ -107,12 +118,21 @@ class Project(models.Model):
         ('Other', 'Other')
     ]
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     title = models.CharField(max_length=200)
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Other')
-    students = models.ManyToManyField(Student, related_name="projects")
-    advisor = models.ForeignKey(Advisor, on_delete=models.CASCADE, related_name="projects")
+    students = models.ManyToManyField(Student, related_name="enrolled_projects")
+    advisor = models.ForeignKey(
+        Advisor,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="projects"
+    )
 
     def __str__(self):
         return self.title
@@ -121,6 +141,7 @@ class Project(models.Model):
 # ------------------- Submission -------------------
 class Submission(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="submissions")
+    file = models.FileField(upload_to='submissions/%Y/%m/%d/')
     file_name = models.CharField(max_length=200)
     submitted_date = models.DateTimeField(auto_now_add=True)
     is_approved = models.BooleanField(default=False)
@@ -129,22 +150,21 @@ class Submission(models.Model):
     def __str__(self):
         return f"Submission for {self.project.title} - {self.file_name}"
 
-
-# ------------------- Evaluation -------------------
-class Evaluation(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="evaluations")
-    evaluator = models.ForeignKey(Advisor, on_delete=models.CASCADE, related_name="evaluations_given")
-    score = models.FloatField()
-    review = models.TextField()
-
-    def __str__(self):
-        return f"Evaluation for {self.project.title} by {self.evaluator}"
+# # ------------------- Evaluation -------------------
+# class Evaluation(models.Model):
+#     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="evaluations")
+#     evaluator = models.ForeignKey(Advisor, on_delete=models.CASCADE, related_name="evaluations_given")
+#     score = models.FloatField()
+#     review = models.TextField()
+#
+#     def __str__(self):
+#         return f"Evaluation for {self.project.title} by {self.evaluator}"
 
 
 # ------------------- Schedule -------------------
 class Schedule(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="meetings")
-    meeting_date = models.DateTimeField()
+    meeting_date = models.DateTimeField(default=timezone.now)
     topic = models.CharField(max_length=200)
     status = models.CharField(max_length=20, choices=[('Planned', 'Planned'), ('Completed', 'Completed')],
                               default='Planned')
