@@ -32,7 +32,7 @@
                         <img class="logo" src=" {% static 'img/Emblem_of_Ramkhamhaeng_University,_BW.svg.png' %} " alt="">
                     </div>
 					<span class="login100-form-title p-b-43">
-						Login to continue
+						Sing up to continue
 					</span>
 					
 					
@@ -49,6 +49,13 @@
 						<span class="label-input100">Password</span>
 					</div>
 
+                    <div class="wrap-input100 validate-input" data-validate="Password is required">
+						<input class="input100" type="password" name="pass">
+						<span class="focus-input100"></span>
+						<span class="label-input100">Conferm Password</span>
+					</div>
+
+
 					<div class="flex-sb-m w-full p-t-3 p-b-32">
 						<div class="contact100-form-checkbox">
 							<input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
@@ -58,8 +65,8 @@
 						</div>
 
 						<div>
-							<a href="https://beta-e-service.ru.ac.th/index.php?r=site/ForgetPassword" class="txt1">
-								Sing up?
+							<a href="{% url 'login' %}" class="txt1">
+								login?
 							</a>
 						</div>
 					</div>
@@ -67,7 +74,7 @@
 					
 					<div class="container-login100-form-btn">
 						<button type="submit" class="login100-form-btn">
-							Login
+							Sing Up
 						</button>
 					</div>
 				</form>
