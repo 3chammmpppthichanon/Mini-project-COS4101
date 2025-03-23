@@ -1,13 +1,13 @@
-<!-- {% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css\style.css' %}">
 <script src="{% static 'js/main.js' %}"></script>
 
 <div class="content">
     <a class="a-text" href="/template/teacher.html">
         <div class="teacher">
-            <img class="img-content" src="/img/teacher.png" alt="">
+            <img class="img-content" src="{% static 'img/teacher.png' %}" alt="">
             <h1 class="text-t">Teacher</h1>
             <p class="text-t">ข้อมูลอาจารย์ทั้งหมด</p>
         </div>
@@ -15,7 +15,7 @@
 
     <a class="a-text" href="/template/project.html">
         <div class="teacher">
-            <img class="img-content" src="/img/project.png" alt="">
+            <img class="img-content" src="{% static 'img/project.png' %}" alt="">
             <h1 class="text-t">Project</h1>
             <p class="text-t">ข้อมูลโปรเจ็คที่ทำสำเร็จทั้งหมด</p>
         </div>
@@ -23,67 +23,14 @@
 
     <a class="a-text" href="/template/manage.html">
         <div class="manage">
-            <img class="img-content" src="/img/management.png" alt="">
+            <img class="img-content" src="{% static 'img/management.png' %}" alt="">
             <h1 class="text-t">Manage</h1>
             <p class="text-t">จัดการข้อมูล</p>
         </div>
     </a>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/js/main.js"></script>
-
-{% endblock %} -->
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
-    <title>Computer Science</title>
-</head>
-
-<body>
-    <div class="nav-bar">
-        <div class="main-logo">
-            <img class="img-main" src="/img/banner1.png" alt="">
-        </div>
-        <div class="nav-bar-text">
-            <a class="a-text" href="https://beta-e-service.ru.ac.th/index.php">E-Services</a>
-            <a class="a-text" href="">Logout</a>
-        </div>
-    </div>
-    <div class="content">
-        <a class="a-text" href="/template/teacher.html">
-            <div class="teacher">
-                <img class="img-contenrt" src="/img/teacher.png" alt="">
-                <h1 class="text-t">Teacher</h1>
-                <p class="text-t">ข้อมูลอาจารย์ทั้งหมด</p>
-            </div>
-        </a>
-
-        <a class="a-text" href="/template/project.html">
-            <div class="teacher">
-                <img class="img-contenrt" src="/img/project.png" alt="">
-                <h1 class="text-t">Project</h1>
-                <p class="text-t">ข้อมูลโปรเจ็คที่ทำสำเร็จทั้งหมด</p>
-            </div>
-        </a>
-
-        <a class="a-text" href="/template/manage.html">
-            <div class="manage">
-                <img class="img-contenrt" src="/img/management.png" alt="">
-                <h1 class="text-t">Manage</h1>
-                <p class="text-t">จัดการข้อมูล</p>
-            </div>
-        </a>
-    </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/js/main.js"></script>
-</body>
+    <script src="{% static 'js/main.js' %}"></script>
 
-</html>
+{% endblock %}
