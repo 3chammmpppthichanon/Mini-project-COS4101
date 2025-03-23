@@ -50,7 +50,7 @@ def logout(request):
 # Advisor
 def advisor_list(request):
     advisors = Advisor.objects.all()
-    return render(request, "advisor.html", {'advisors': advisors})
+    return render(request, "teacher.html", {'advisors': advisors})
 
 # -----------------------------------------------------------------------------------------------------
 # CRUD for Project
@@ -58,6 +58,9 @@ def project_list(request):  # Display all project
     projects = Project.objects.all()
     return render(request, 'project.html', {'projects': projects})
 
+def completed_project(request):
+    projects = Project.objects.filter(status='Completed')
+    return render(request, 'project.html', {'projects': projects})
 
 @login_required
 def add_project(request):
