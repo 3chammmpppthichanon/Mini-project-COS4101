@@ -7,6 +7,8 @@
 <div class="teacher-content">
     <div class="top">
         <!-- 1 -->
+        {% if advisors %}
+
         {% for advisor in  advisors %}
         <a class="a-text" href="javascript:void(0)" id="openPopup1">
             <div class="box">
@@ -23,19 +25,9 @@
         </div>
         {% endfor %}
 
-        <a class="a-text" href="javascript:void(0)" id="openPopup2">
-        <div class="box">
-            <img class="img-t" src="{% static 'img/teacher.png' %}" alt="">
-            <h1>Name</h1>
-        </div>
-        </a>
-        <div id="popup2" class="popup">
-            <div class="popup-content">
-                <span class="close">&times;</span>
-                <h2>Detell 2</h2>
-                <p>นี่คือเนื้อหาใน</p>
-            </div>
-        </div>
+        {% else %}
+            <h2 class="text-center">No advisors available</h2>
+        {% endif %}
 
     </div>
     <div class="buttom">
