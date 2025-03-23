@@ -79,7 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student_profile")
     student_id = models.CharField(max_length=15, unique=True)
-    year = models.IntegerField()
+    year = models.IntegerField(null=True, blank=True)
     major = models.CharField(max_length=100)
 
     def __str__(self):
