@@ -15,7 +15,15 @@ from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
+def index(request):
+    projects = Project.objects.all()
+    advisors = Advisor.objects.all()
 
+    context = {
+        'advisors': advisors,
+        'projects': projects,
+    }
+    return render(request, "index.html", context)
 
 def login(request):
     if request.method == "POST":
@@ -30,7 +38,7 @@ def login(request):
             messages.warning(request, "Invalid email or password.")
             return redirect("login")
 
-    return render(request, "register/login.html")
+    return render(request, "login.html")
 
 
 @login_required
@@ -38,12 +46,17 @@ def logout(request):
     auth.logout(request)
     return redirect("login")
 
+# -----------------------------------------------------------------------------------------------------
+# Advisor
+def advisor_list(request):
+    advisors = Advisor.objects.all()
+    return render(request, "advisor.html", {'advisors': advisors})
 
 # -----------------------------------------------------------------------------------------------------
 # CRUD for Project
 def project_list(request):  # Display all project
     projects = Project.objects.all()
-    return render(request, 'something.html', {'projects': projects})
+    return render(request, 'project.html', {'projects': projects})
 
 
 @login_required
@@ -68,7 +81,7 @@ def add_project(request):
         messages.success(request, "สร้างโปรเจ็กต์สำเร็จ")
         return redirect('project_detail', project_id=project.id)
 
-    return render(request, 'projects/add_project.html')
+    return render(request, 'project.html')
 
 
 def project_detail(request, project_id):
@@ -80,7 +93,7 @@ def project_detail(request, project_id):
         'students': students,
     }
 
-    return render(request, 'projects/project_detail.html', context)
+    return render(request, 'project.html', context)
 
 
 @login_required
@@ -93,14 +106,14 @@ def update_project(request, project_id):
         category = request.POST["category"]
 
         if not title or not description:
-            return render(request, "something.html")
+            return render(request, "update_project.html")
 
         project.title = title
         project.description = description
         project.status = status
         project.category = category
         project.save()
-        return redirect('something.html')
+        return redirect('update_project.html')
 
 
 @login_required

@@ -3,6 +3,7 @@ from . import views
 from .views import SubmissionView, download_submission
 
 urlpatterns = [
+    path('', views.index, name='index'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('projects/<int:project_id>/submissions/', SubmissionView.as_view(), name='submissions'),
