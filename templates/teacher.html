@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css\style.css' %}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{% static 'js/main.js' %}"></script>
 
 <div class="teacher-content">
@@ -10,18 +11,18 @@
         {% if advisors %}
 
         {% for advisor in  advisors %}
-        <a class="a-text" href="javascript:void(0)" id="openPopup1">
+        <a class="a-text" href="javascript:void(0)" id="openPopup{{ advisor.id }}">
             <div class="box">
                 <img class="img-t" src="{% static 'img/teacher.png' %}" alt="">
-                <h1>{{ advisor.user.first_name}}  {{ advisor.user.last_name }}</h1>
+                <h1>{{ advisor.user.first_name }} {{ advisor.user.last_name }}</h1>
             </div>
         </a>
-        <div id="popup1" class="popup">
+        <div id="popup{{ advisor.id }}" class="popup">
             <div class="popup-content">
                 <span class="close">&times;</span>
                 <h2>{{ advisor.title }}</h2>
-                <h2>{{ advisor.user.first_name}}  {{ advisor.user.last_name }}</h2>
-                <p>{{ advisor.expertise}}</p>
+                <h2>{{ advisor.user.first_name }} {{ advisor.user.last_name }}</h2>
+                <p>{{ advisor.expertise }}</p>
             </div>
         </div>
         {% endfor %}
@@ -35,8 +36,4 @@
        
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/main.js' %}"></script>
-
 {% endblock %}

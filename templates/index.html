@@ -2,13 +2,12 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css\style.css' %}">
-<script src="{% static 'js/main.js' %}"></script>
 
 <div class="content">
     <a class="a-text" href="{% url 'advisor_list' %}">
         <div class="teacher">
             <img class="img-content" src="{% static 'img/teacher.png' %}" alt="">
-            <h1 class="text-t">Teacher</h1>
+            <h1 class="text-t">Information Teacher</h1>
             <p class="text-t">ข้อมูลอาจารย์ทั้งหมด</p>
         </div>
     </a>
@@ -16,21 +15,21 @@
     <a class="a-text" href="{% url 'project_list' %}">
         <div class="teacher">
             <img class="img-content" src="{% static 'img/project.png' %}" alt="">
-            <h1 class="text-t">Project</h1>
+            <h1 class="text-t">Example Project</h1>
             <p class="text-t">ข้อมูลโปรเจ็คที่ทำสำเร็จทั้งหมด</p>
         </div>
     </a>
 
-    <a class="a-text" href="/template/manage.html">
+    <a class="a-text" href="{% url 'manage_project' %}">
         <div class="manage">
             <img class="img-content" src="{% static 'img/management.png' %}" alt="">
-            <h1 class="text-t">Manage</h1>
-            <p class="text-t">จัดการข้อมูล</p>
+            <h1 class="text-t">Manage Project</h1>
+            <p class="text-t">จัดการข้อมูลโปรเจ็ค</p>
         </div>
     </a>
 </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/main.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
 
 {% endblock %}

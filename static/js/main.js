@@ -81,22 +81,40 @@ document.querySelectorAll('.teacher, .manage').forEach(search => {
     });
 });
 
-function setupPopup(popupId, buttonId) {
-    const popup = document.getElementById(popupId);
-    const openButton = document.getElementById(buttonId);
-    const closeButton = popup.querySelector(".close");
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".a-text").forEach((openButton) => {
+        const popupId = openButton.id.replace("openPopup", "popup");
+        const popup = document.getElementById(popupId);
+        
+        if (!popup) return;
 
-    openButton.addEventListener("click", () => popup.classList.add("show"));
-    closeButton.addEventListener("click", () => popup.classList.remove("show"));
-    
-    window.addEventListener("click", (event) => {
-        if (event.target === popup) {
+        const closeButton = popup.querySelector(".close");
+
+        openButton.addEventListener("click", () => {
+            console.log("Opening:", popupId);
+            popup.classList.add("show");
+        });
+
+        closeButton.addEventListener("click", () => {
+            console.log("Closing:", popupId);
             popup.classList.remove("show");
-        }
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === popup) {
+                popup.classList.remove("show");
+            }
+        });
     });
-}
+});
 
 // ตั้งค่า popups ทั้งหมด
-for (let i = 1; i <= 5; i++) {
-    setupPopup(`popup${i}`, `openPopup${i}`);
+// for (let i = 1; i <= 5; i++) {
+//     setupPopup(`popup${i}`, `openPopup${i}`);
+// }
+
+
+function handleSubmit(event) {
+    event.preventDefault();
+    alert('Appointment Submitted Successfully!');
 }

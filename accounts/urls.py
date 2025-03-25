@@ -11,4 +11,6 @@ urlpatterns = [
     path('completed_projects/', views.completed_project, name='completed_projects'),
     path('projects/<int:project_id>/submissions/', SubmissionView.as_view(), name='submissions'),
     path('submissions/<int:submission_id>/download/', download_submission, name='download_submission'),
+    path('Manage/', views.manage_project, name='manage_project'),
+    path('Time_sent/', views.time_sent, name='time_sent'),
 ]

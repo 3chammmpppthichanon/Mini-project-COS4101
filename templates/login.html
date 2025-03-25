@@ -37,9 +37,9 @@
 					
 					
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" name="ussername">
+						<input class="input100" type="text" name="email">
 						<span class="focus-input100"></span>
-						<span class="label-input100">Ussername</span>
+						<span class="label-input100">Email</span>
 					</div>
 					
 					
@@ -66,7 +66,7 @@
 			
 					
 					<div class="container-login100-form-btn">
-						<button type="submit" class="login100-form-btn">
+						<button type="submit" class="login100-form-btn" onclick="window.location.href='{% url 'index' %}';">
 							Login
 						</button>
 					</div>

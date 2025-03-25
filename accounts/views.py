@@ -253,3 +253,13 @@ def view_schedule(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     schedules = Schedule.objects.filter(project=project)
     return render(request, 'schedules/schedule_list.html', {'schedules': schedules})
+
+
+
+
+def manage_project(request):
+    return render(request, 'manage.html', {'manage_project': manage_project})
+
+
+def time_sent(request):
+    return render(request, 'timesent.html', {'time_sent': time_sent})

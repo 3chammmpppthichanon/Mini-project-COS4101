@@ -1,7 +1,40 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+<link rel="stylesheet" href="{% static 'css\style.css' %}">
 
-    <h2 class="text-center">No advisors available</h2>
+<div class="content">
 
+    <!-- ใส่เงื่อนไข if  -->
+
+    <!-- สำหรับนักศึกษาที่ยังไม่มีโปรเจ็ค -->
+    <!-- <a class="a-text" href="{% url 'advisor_list' %}">
+        <div class="teacher">
+            <img class="img-content" src="{% static 'img/new-project.png' %}" alt="">
+            <h1 class="text-t">Create Project</h1>
+            <p class="text-t">สร้างโปรเจ็ค</p>
+        </div>
+    </a> -->
+    
+    <!-- สำหรับนักศึกษาที่มีโปรเจ็คแล้ว -->
+    <a class="a-text" href="{% url 'advisor_list' %}">
+        <div class="teacher">
+            <img class="img-content" src="{% static 'img/edit_project.png' %}" alt="">
+            <h1 class="text-t">Edit Project</h1>
+            <p class="text-t">แก้ไขโปรเจ็ค</p>
+        </div>
+    </a>
+    <a class="a-text" href="{% url 'time_sent' %}">
+        <div class="teacher">
+            <img class="img-content" src="{% static 'img/deadline.png' %}" alt="">
+            <h1 class="text-t">Make an appointment</h1>
+            <p class="text-t">นัดเวลาอาจาร์ย</p>
+        </div>
+    </a>
+
+    <!--  -->
+</div>
+    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
 {% endblock %}

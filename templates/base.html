@@ -14,9 +14,10 @@
 <body>
     <div class="nav-bar">
         <div class="main-logo">
-            <img class="img-main" src="{% static 'img/banner1.png' %}" alt="">
+           <a href="{% url 'index' %}"><img class="img-main" src="{% static 'img/banner1.png' %}" alt=""></a>
         </div>
         <div class="nav-bar-text">
+            <a class="a-text" href="{% url 'index' %}">Index</a>
             <a class="a-text" href="https://beta-e-service.ru.ac.th/index.php">E-Services</a>
             <a class="a-text" href="{% url 'login' %}">Logout</a>
         </div>
