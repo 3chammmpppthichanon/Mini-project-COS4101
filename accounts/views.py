@@ -4,18 +4,25 @@ from django.conf import settings
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
+from django.core.files.uploadedfile import UploadedFile
 from django.db.models import Q
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, Http404
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
 
+from .forms import SubmissionForm
 from .models import User, Project, Advisor, Student, Submission, Schedule
 from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
 def index(request):
+    """
+    หน้าแรกของเว็บไซต์
+
+    แสดงหน้าหลักพร้อมข้อมูลภาพรวมสำหรับผู้ใช้
+    """
     projects = Project.objects.all()
     advisors = Advisor.objects.all()
 
@@ -26,6 +33,11 @@ def index(request):
     return render(request, "index.html", context)
 
 def login(request):
+    """
+    การเข้าสู่ระบบของผู้ใช้
+
+    จัดการการยืนยันตัวตนและลงชื่อเข้าใช้ระบบ
+    """
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
@@ -43,27 +55,53 @@ def login(request):
 
 @login_required
 def logout(request):
+    """
+    การออกจากระบบ
+
+    ทำการออกจากระบบและเคลียร์เซสชัน
+    """
+
     auth.logout(request)
     return redirect("login")
+
 
 # -----------------------------------------------------------------------------------------------------
 # Advisor
 def advisor_list(request):
+    """
+    แสดงรายชื่ออาจารย์ที่ปรึกษาทั้งหมด
+    """
+
     advisors = Advisor.objects.all()
     return render(request, "teacher.html", {'advisors': advisors})
 
 # -----------------------------------------------------------------------------------------------------
 # CRUD for Project
 def project_list(request):  # Display all project
+    """
+    แสดงรายการโครงงานทั้งหมด
+    """
+
     projects = Project.objects.all()
     return render(request, 'project.html', {'projects': projects})
 
 def completed_project(request):
+    """
+    แสดงรายการโครงงานที่เสร็จสิ้นแล้ว
+    """
+
     projects = Project.objects.filter(status='Completed')
     return render(request, 'project.html', {'projects': projects})
 
+
 @login_required
 def add_project(request):
+    """
+    สร้างโครงงานใหม่
+
+    สำหรับอาจารย์ที่ปรึกษาในการสร้างโครงงานใหม่
+    """
+
     if request.method == 'POST':
         if request.user.role not in ['Advisor', 'Admin']:
             messages.error(request, "ไม่มีสิทธิ์สร้างโปรเจ็กต์")
@@ -88,19 +126,34 @@ def add_project(request):
 
 
 def project_detail(request, project_id):
+    """
+    แสดงรายละเอียดของโครงงาน
+
+    Args:
+        project_id: รหัสโครงงาน
+    """
+
     project = get_object_or_404(Project, id=project_id)
     students = project.students.all()
+    submissions = project.submissions.all()
 
     context = {
         'project': project,
         'students': students,
+        'submissions': submissions,
     }
-
-    return render(request, 'project.html', context)
+    return render(request, 'projects/detail.html', context)
 
 
 @login_required
 def update_project(request, project_id):
+    """
+    แก้ไขข้อมูลโครงงาน
+
+    Args:
+        project_id: รหัสโครงงานที่ต้องการแก้ไข
+    """
+
     project = get_object_or_404(Project, id=project_id)
     if request.method == "POST":
         title = request.POST["title"]
@@ -121,6 +174,13 @@ def update_project(request, project_id):
 
 @login_required
 def delete_project(request, project_id):
+    """
+    ลบโครงงาน
+
+    Args:
+        project_id: รหัสโครงงานที่ต้องการลบ
+    """
+
     project = get_object_or_404(Project, id=project_id)
 
     if request.method == "POST":
@@ -132,6 +192,12 @@ def delete_project(request, project_id):
 
 
 def search_project(request):
+    """
+    ค้นหาโครงงาน
+
+    ค้นหาโครงงานตามคำค้นที่ผู้ใช้ระบุ
+    """
+
     query = request.GET.get('q')
     projects = Project.objects.all()
 
@@ -147,6 +213,13 @@ def search_project(request):
 
 @login_required
 def add_students_to_project(request, project_id):
+    """
+    เพิ่มนักศึกษาเข้าโครงงาน
+
+    Args:
+        project_id: รหัสโครงงานที่ต้องการเพิ่มนักศึกษา
+    """
+
     project = get_object_or_404(Project, id=project_id)
 
     if not (request.user.role == 'Admin' or
@@ -173,62 +246,69 @@ def add_students_to_project(request, project_id):
 # -----------------------------------------------------------------------------------------------------
 
 #Submission Management
-class SubmissionView(View):
-    def post(self, request, project_id):
-        project = get_object_or_404(Project, id=project_id)
-        if not self._check_permission(request.user, project):
-            return JsonResponse({'error': 'ไม่มีสิทธิ์อัพโหลด'}, status=403)
+@login_required
+def upload_submission(request, project_id):
+    """
+    อัปโหลดไฟล์งานสำหรับโครงงาน
 
-        if 'file' not in request.FILES:
-            return JsonResponse({'error': 'No file found in the request.'}, status=400)
+    Args:
+        project_id: รหัสโครงงานที่ต้องการอัปโหลดไฟล์
+    """
 
-        uploaded_file = request.FILES['file']
-        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'submissions'))
-        file_name = fs.save(uploaded_file.name, uploaded_file)
+    project = get_object_or_404(Project, id=project_id)
 
-        submission = Submission.objects.create(
-            project=project,
-            file_name=fs.url(file_name),
-            submitted_date=timezone.now(),
-        )
+    # ตรวจสอบสิทธิ์นักศึกษา
+    if request.user.role != 'Student' or not project.students.filter(user=request.user).exists():
+        messages.error(request, "คุณไม่มีสิทธิ์อัพโหลดไฟล์")
+        return redirect('project_detail', project_id=project_id)
 
-        return JsonResponse({
-            'message': 'File submitted successfully',
-            'submission_id': submission.id,
-            'file_url': submission.file_name,
-        })
+    if request.method == "POST":
+        form = SubmissionForm(request.POST, request.FILES)
+        if form.is_valid():
+            submission = form.save(commit=False)
+            submission.project = project
+            submission.save()
+            messages.success(request, "อัพโหลดไฟล์สำเร็จ")
+            return redirect('project_detail', project_id=project_id)
+    else:
+        form = SubmissionForm()
 
-    def _check_permission(self, user, project):
-        if user.role == 'Student':
-            return user.student_profile in project.students.all()
-        elif user.role == 'Advisor':
-            return project.advisor == user.advisor_profile
-        return False
+    return render(request, 'submissions/upload.html', {
+        'form': form,
+        'project': project
+    })
 
-    def get(self, request, project_id):
-        project = get_object_or_404(Project, id=project_id)
-        submissions = Submission.objects.filter(project=project).values(
-            'id', 'file_name', 'submitted_date', 'is_approved', 'feedback'
-        )
-
-        return JsonResponse({'submissions': list(submissions)}, safe=False)
-
-
+@login_required
 def download_submission(request, submission_id):
-    submission = get_object_or_404(Submission, id=submission_id)
-    file_path = os.path.join(settings.MEDIA_ROOT, submission.file_name)
+    """
+    ดาวน์โหลดไฟล์งานที่อัปโหลดไว้
 
+    Args:
+        submission_id: รหัสการส่งงานที่ต้องการดาวน์โหลด
+    """
+
+    submission = get_object_or_404(Submission, id = submission_id)
+
+    if request.user.role == 'Advisor' and submission.project.advisor != request.user.advisor_profile:
+        return HttpResponseForbidden("คุณไม่มีสิทธิ์ดาวน์โหลดไฟล์นี้")
+
+    file_path = submission.file.path
     if os.path.exists(file_path):
-        with open(file_path, 'rb') as f:
-            response = HttpResponse(f.read(), content_type="application/octet-stream")
-            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/octet-stream")
+            response['Content-Disposition'] = f'attachment; filename={os.path.basename(file_path)}'
             return response
-    return JsonResponse({'error': 'File not found.'}, status=404)
-
-
+    raise Http404
 # -----------------------------------------------------------------------------------------------------
 @login_required
 def create_schedule(request, project_id):
+    """
+    สร้างตารางนัดหมายสำหรับโครงงาน
+
+    Args:
+        project_id: รหัสโครงงานที่ต้องการสร้างตารางนัดหมาย
+    """
+
     project = get_object_or_404(Project, id=project_id)
     if not (request.user.role == 'Advisor' and project.advisor == request.user.advisor_profile):
         messages.error(request, "ไม่มีสิทธิ์สร้างการนัดหมาย")
@@ -250,6 +330,13 @@ def create_schedule(request, project_id):
     return render(request, 'schedules/create_schedule.html')
 
 def view_schedule(request, project_id):
+    """
+    ดูตารางนัดหมายของโครงงาน
+
+    Args:
+        project_id: รหัสโครงงานที่ต้องการดูตารางนัดหมาย
+    """
+
     project = get_object_or_404(Project, id=project_id)
     schedules = Schedule.objects.filter(project=project)
     return render(request, 'schedules/schedule_list.html', {'schedules': schedules})
