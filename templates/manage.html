@@ -8,13 +8,13 @@
     <!-- ใส่เงื่อนไข if  -->
 
     <!-- สำหรับนักศึกษาที่ยังไม่มีโปรเจ็ค -->
-    <!-- <a class="a-text" href="{% url 'advisor_list' %}">
+    <a class="a-text" href="{% url 'create_project' %}">
         <div class="teacher">
             <img class="img-content" src="{% static 'img/new-project.png' %}" alt="">
             <h1 class="text-t">Create Project</h1>
             <p class="text-t">สร้างโปรเจ็ค</p>
         </div>
-    </a> -->
+    </a>
     
     <!-- สำหรับนักศึกษาที่มีโปรเจ็คแล้ว -->
     <a class="a-text" href="{% url 'advisor_list' %}">
