@@ -8,8 +8,8 @@
 <div class="content">
     <div class="container mt-5">
         <div class="card">
-            <div class="card-header">
-                <h5>Book an Appointment</h5>
+            <div class="card-header text-center">
+                <h5>Create Project</h5>
             </div>
             <div class="card-body">
                 <form action="#" method="POST" onsubmit="handleSubmit(event)">
@@ -26,20 +26,27 @@
                         </select>
                     </div>
 
-                    <!-- Select Date -->
+                    <!-- Project Name -->
                     <div class="mb-3">
-                        <label for="appointmentDate" class="form-label">Choose Date</label>
-                        <input type="date" id="appointmentDate" class="form-control" required>
+                        <label for="projectName" class="form-label">Project Name</label>
+                        <input type="text" id="projectName" class="form-control" placeholder="Enter project name" required>
                     </div>
-                
-                    <!-- Select Time -->
+
+                    <!-- Select Category -->
                     <div class="mb-3">
-                        <label for="appointmentTime" class="form-label">Choose Time</label>
-                        <input type="time" id="appointmentTime" class="form-control" required>
+                        <label for="category" class="form-label">Select Category</label>
+                        <select id="category" class="form-control" required>
+                            <option value="">-- Select Category --</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                
+
                     <!-- Submit Button -->
-                    <button type="submit" class="btn btn-primary">Submit Appointment</button>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit Project</button>
+                    </div>
                 </form>
             </div>
         </div>

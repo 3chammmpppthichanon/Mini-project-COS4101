@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
-<link rel="icon" type="image/png" href="{% static 'img/Emblem_of_Ramkhamhaeng_University,_BW.svg.png' %}"/>
+<link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
 <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %} ">
@@ -58,7 +58,7 @@
 						</div>
 
 						<div>
-							<a href="https://beta-e-service.ru.ac.th/index.php?r=site/ForgetPassword" class="txt1">
+							<a href="{% url 'sing_up' %}" class="txt1">
 								Sing up?
 							</a>
 						</div>

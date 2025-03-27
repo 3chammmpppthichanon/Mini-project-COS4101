@@ -263,3 +263,9 @@ def manage_project(request):
 
 def time_sent(request):
     return render(request, 'timesent.html', {'time_sent': time_sent})
+
+def create_project(request):
+    return render(request, 'create_project.html', {'create_project': create_project})
+
+def sing_up(request):
+    return render(request, 'sing_up.html', {'sing_up': sing_up})
