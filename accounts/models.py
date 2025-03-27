@@ -245,3 +245,7 @@ class Schedule(models.Model):
         แสดงหัวข้อและวันที่นัดหมาย
         """
         return f"{self.topic} - {self.meeting_date.strftime('%d/%m/%Y %H:%M')}"
+    
+
+
+#Test Merge123 
