@@ -356,3 +356,6 @@ def create_project(request):
 
 def sing_up(request):
     return render(request, 'sing_up.html', {'sing_up': sing_up})
+
+def edit_project(request):
+    return render(request, 'edit_project.html', {'edit_project': edit_project})

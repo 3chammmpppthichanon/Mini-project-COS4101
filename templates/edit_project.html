@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css\style.css' %}">
+<link rel="stylesheet" href="{% static 'css\time.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="content">
+    <div class="container mt-5">
+        <div class="row g-5"> <!-- เพิ่ม g-4 เพื่อเพิ่มระยะห่างระหว่างคอลัมน์ -->
+            <!-- First Form: Update Project -->
+            <div class="col-md-6">
+                <div class="card ">
+                    <div class="card-header">
+                        <h5>Update Project</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="#" method="POST" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
+                            {% csrf_token %}
+                            
+                            <!-- Select Project -->
+                            <div class="mb-3">
+                                <label for="project" class="form-label">Select Project</label>
+                                <select id="project" class="form-control" required>
+                                    <option value="">-- Select Project --</option>
+                                    {% for project in projects %}
+                                        <option value="{{ project.id }}">{{ project.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Upload File -->
+                            <div class="mb-3">
+                                <label for="fileUpload" class="form-label">Upload File</label>
+                                <input type="file" id="fileUpload" class="form-control" required>
+                            </div>
+                        
+                            <!-- Submit Button (Centered) -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit Project</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Form: Another Form -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Submit complete Project</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="#" method="POST" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
+                            {% csrf_token %}
+                            
+                            <!-- Select Project -->
+                            <div class="mb-3">
+                                <label for="project2" class="form-label">Select Another Project</label>
+                                <select id="project2" class="form-control" required>
+                                    <option value="">-- Select Project --</option>
+                                    {% for project in projects %}
+                                        <option value="{{ project.id }}">{{ project.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Upload File -->
+                            <div class="mb-3">
+                                <label for="fileUpload2" class="form-label">Upload Another File</label>
+                                <input type="file" id="fileUpload2" class="form-control" required>
+                            </div>
+                        
+                            <!-- Submit Button (Centered) -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit complete Project</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+{% endblock %}
