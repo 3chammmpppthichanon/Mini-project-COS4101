@@ -90,8 +90,12 @@ def completed_project(request):
     แสดงรายการโครงงานที่เสร็จสิ้นแล้ว
     """
 
-    projects = Project.objects.filter(status='Completed')
+    # projects = Project.objects.filter(status='Completed')
+    # return render(request, 'project.html', {'projects': projects})
+
+    projects = Project.objects.filter(status='Completed').prefetch_related('submissions')
     return render(request, 'project.html', {'projects': projects})
+
 
 
 @login_required
@@ -299,6 +303,8 @@ def download_submission(request, submission_id):
             response['Content-Disposition'] = f'attachment; filename={os.path.basename(file_path)}'
             return response
     raise Http404
+
+
 # -----------------------------------------------------------------------------------------------------
 @login_required
 def create_schedule(request, project_id):
